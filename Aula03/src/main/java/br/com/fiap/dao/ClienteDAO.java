@@ -5,6 +5,7 @@ import br.com.fiap.exception.CommitException;
 import br.com.fiap.exception.IdNaoEncontradoException;
 
 import javax.persistence.EntityManager;
+import java.util.Objects;
 
 public class ClienteDAO implements IClienteDAO{
 
@@ -21,8 +22,8 @@ public class ClienteDAO implements IClienteDAO{
 
     @Override
     public void atualizar(Cliente cliente){
-        Cliente cliente = buscarPorId(cliente.getId());
-
+        buscarPorId(cliente.getId()); //valida se existe
+        em.merge(cliente);
     }
 
     @Override
@@ -33,11 +34,11 @@ public class ClienteDAO implements IClienteDAO{
 
     @Override
     public Cliente buscarPorId(Integer id) throws IdNaoEncontradoException {
-        Cliente cliente = em.find(id);
-        if (cliente.equals(null)) {
+        Cliente cliente = em.find(Cliente.class, id);
+        if (Objects.isNull(cliente)) {
             throw new IdNaoEncontradoException("Cliente não encontrado!");
         }
-        return em.find(id);
+        return cliente;
     }
 
     @Override
